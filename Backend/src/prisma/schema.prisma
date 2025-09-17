@@ -1,0 +1,29 @@
+model User {
+  id                    String   @id @default(uuid())
+  wallet_address        String   @unique
+  username              String   @unique
+  bio                   String?
+  profile_pic_ipfs_hash String?
+  created_at            DateTime @default(now())
+  posts                 Post[]
+  follows               Follow[] @relation("UserFollows", references: [id])
+  followers             Follow[] @relation("UserFollowers", references: [id])
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  creator_id  String
+  creator     User     @relation(fields: [creator_id], references: [id])
+  ipfs_hash   String
+  nft_token_id String?
+  created_at  DateTime @default(now())
+}
+
+model Follow {
+  id         String   @id @default(uuid())
+  followerId String
+  followingId String
+  follower   User     @relation("UserFollows", fields: [followerId], references: [id])
+  following  User     @relation("UserFollowers", fields: [followingId], references: [id])
+  created_at DateTime @default(now())
+}
